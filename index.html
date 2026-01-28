@@ -1,30 +1,135 @@
-<script>
-/* 🔴 CHANGE ONLY THIS PART 🔴 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Name Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f8ff;
+        }
+        h1 {
+            color: #ff69b4;
+        }
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            width: 200px;
+        }
+        button {
+            padding: 8px 12px;
+            font-size: 16px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        #hint {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #ff1493;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎀 Baby Name Guessing Game 🎀</h1>
+    <p>Guess the secret baby name!</p>
+    <p>Number of letters in the name: <span id="letters"></span></p>
+    <p>Attempts left: <span id="attempts"></span></p>
 
-const babyNames = ["Irai Elili", "Isai Nethra", "Inanya", "pooviyaal"];
-const secretName = "Isai Nethra";
+    <input type="text" id="guess" placeholder="Enter name">
+    <button onclick="checkGuess()">Guess</button>
 
-/* 🔴 STOP CHANGING HERE 🔴 */
+    <div id="message"></div>
+    <div id="hint"></div>
 
-let attemptsLeft = 5;
+    <script>
+        /* 🔴 CHANGE ONLY THIS PART 🔴 */
+        const babyNames = ["Isai Nethra", "inanya", "poongulali", "Irai Elili"];
+        const secretName = "Isai Nethra";
+        /* 🔴 STOP CHANGING HERE 🔴 */
 
-const cleanSecret = secretName.replace(/\s/g, "").toLowerCase();
+        let attemptsLeft = 5;
+        const cleanSecret = secretName.replace(/\s/g, "").toLowerCase();
 
-document.getElementById("letters").innerText = cleanSecret.length;
-document.getElementById("attempts").innerText = attemptsLeft;
+        document.getElementById("letters").innerText = cleanSecret.length;
+        document.getElementById("attempts").innerText = attemptsLeft;
 
-function checkGuess() {
-    const input = document.getElementById("guess");
-    const msg = document.getElementById("message");
-    const hint = document.getElementById("hint");
+        function checkGuess() {
+            const input = document.getElementById("guess");
+            const msg = document.getElementById("message");
+            const hint = document.getElementById("hint");
 
-    let guessRaw = input.value.trim();
-    if (!guessRaw) return;
+            let guessRaw = input.value.trim();
+            if (!guessRaw) return;
 
-    let guess = guessRaw.replace(/\s/g, "").toLowerCase();
+            let guess = guessRaw.replace(/\s/g, "").toLowerCase();
 
-    let correctPos = 0;
-    let wrongPos = [];
-    let usedSecret = Array(cleanSecret.length).fill(false);
-    let usedGuess = Array(gues
+            let correctPos = 0;
+            let wrongPosLetters = [];
+            let usedSecret = Array(cleanSecret.length).fill(false);
+            let usedGuess = Array(guess.length).fill(false);
 
+            // Correct position check
+            for (let i = 0; i < Math.min(guess.length, cleanSecret.length); i++) {
+                if (guess[i] === cleanSecret[i]) {
+                    correctPos++;
+                    usedSecret[i] = true;
+                    usedGuess[i] = true;
+                }
+            }
+
+            // Wrong position check
+            for (let i = 0; i < guess.length; i++) {
+                if (usedGuess[i]) continue;
+
+                for (let j = 0; j < cleanSecret.length; j++) {
+                    if (!usedSecret[j] && guess[i] === cleanSecret[j]) {
+                        wrongPosLetters.push(guess[i]);
+                        usedSecret[j] = true;
+                        break;
+                    }
+                }
+            }
+
+            // Correct letters guessed (all)
+            let correctLetters = [...new Set(guess.split("").filter(c => cleanSecret.includes(c)))];
+
+            // Check if the guess is correct
+            if (guess === cleanSecret) {
+                msg.innerHTML = `🎉 Correct! Name is <b>${secretName}</b> 💖`;
+                msg.style.color = "green";
+                hint.innerHTML = "🎀 Perfect Guess!";
+                return;
+            }
+
+            attemptsLeft--;
+            document.getElementById("attempts").innerText = attemptsLeft;
+
+            msg.style.color = "blue";
+            msg.innerHTML = `
+                ✔ Letters in correct position: <b>${correctPos}</b><br>
+                ⚠ Letters present but in wrong position: <b>${wrongPosLetters.join(", ") || "None"}</b><br>
+                🔤 Correct letters you guessed: <b>${correctLetters.join(", ") || "None"}</b>
+            `;
+
+            if (attemptsLeft === 0) {
+                msg.style.color = "purple";
+                msg.innerHTML += `<br><br>😢 Game Over! Name is <b>${secretName}</b>`;
+                hint.innerHTML = "🎉 See you at the Naming Ceremony!";
+            }
+
+            input.value = "";
+        }
+
+        // Optional: allow pressing Enter to guess
+        document.getElementById("guess").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") checkGuess();
+        });
+    </script>
+</body>
+</html>
