@@ -1,96 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guess Our Baby Girl’s Name 💖</title>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #ffe6f0, #fff);
-    text-align: center;
-    padding: 20px;
-}
-
-.card {
-    max-width: 420px;
-    margin: auto;
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-
-h1 {
-    color: #e91e63;
-}
-
-input {
-    padding: 12px;
-    width: 80%;
-    font-size: 18px;
-    border-radius: 10px;
-    border: 2px solid #ddd;
-    margin-top: 10px;
-}
-
-button {
-    margin-top: 15px;
-    padding: 12px 24px;
-    font-size: 18px;
-    background: #e91e63;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #c2185b;
-}
-
-#message {
-    margin-top: 20px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.hint {
-    color: #555;
-    margin-top: 10px;
-}
-</style>
-</head>
-
-<body>
-<div class="card">
-    <h1>👶 Guess Our Baby Girl’s Name</h1>
-    <p>💡 Total Letters: <b id="letters"></b></p>
-    <p>❤️ Attempts Left: <b id="attempts"></b></p>
-
-    <input type="text" id="guess" placeholder="Enter your guess">
-    <br>
-    <button onclick="checkGuess()">Guess</button>
-
-    <div id="message"></div>
-    <div class="hint" id="hint"></div>
-</div>
-
 <script>
 /* 🔴 CHANGE ONLY THIS PART 🔴 */
 
-// Possible names
-const babyNames = ["Iraielili", "Isai Nethra", "Poongulali", "Inanya", "Idhal Iniyaal"];
-
-// Final baby name (keep secret 😉)
-const secretName = "Isai Nethra";
+const babyNames = ["Tharun Kumar", "Arun Kumar", "Varun", "Kavin"];
+const secretName = "Tharun Kumar";
 
 /* 🔴 STOP CHANGING HERE 🔴 */
 
 let attemptsLeft = 5;
 
-document.getElementById("letters").innerText = secretName.length;
+const cleanSecret = secretName.replace(/\s/g, "").toLowerCase();
+
+document.getElementById("letters").innerText = cleanSecret.length;
 document.getElementById("attempts").innerText = attemptsLeft;
 
 function checkGuess() {
@@ -98,37 +18,13 @@ function checkGuess() {
     const msg = document.getElementById("message");
     const hint = document.getElementById("hint");
 
-    let guess = input.value.trim();
-    if (!guess) return;
+    let guessRaw = input.value.trim();
+    if (!guessRaw) return;
 
-    if (!babyNames.map(n => n.toLowerCase()).includes(guess.toLowerCase())) {
-        msg.innerHTML = "❌ Choose a name from the list only!";
-        msg.style.color = "red";
-        return;
-    }
+    let guess = guessRaw.replace(/\s/g, "").toLowerCase();
 
-    if (guess.toLowerCase() === secretName.toLowerCase()) {
-        msg.innerHTML = `🎉 Correct! Our princess is <b>${secretName}</b> 💖`;
-        msg.style.color = "green";
-        hint.innerHTML = "🎀 Thank you for guessing!";
-        return;
-    }
+    let correctPos = 0;
+    let wrongPos = [];
+    let usedSecret = Array(cleanSecret.length).fill(false);
+    let usedGuess = Array(gues
 
-    attemptsLeft--;
-    document.getElementById("attempts").innerText = attemptsLeft;
-
-    if (attemptsLeft > 0) {
-        msg.innerHTML = "❌ Wrong guess! Try again.";
-        msg.style.color = "red";
-        hint.innerHTML = `💡 Hint: Name starts with <b>${secretName.charAt(0)}</b>`;
-    } else {
-        msg.innerHTML = `😢 Game Over! The name is <b>${secretName}</b> 💕`;
-        msg.style.color = "purple";
-        hint.innerHTML = "🎉 See you at the Naming Ceremony!";
-    }
-
-    input.value = "";
-}
-</script>
-</body>
-</html>
